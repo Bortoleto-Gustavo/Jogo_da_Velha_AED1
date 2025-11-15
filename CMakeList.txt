@@ -1,0 +1,15 @@
+cmake_minimum_required(VERSION 3.10)
+project(JogoDaVelhaSFML)
+
+set(CMAKE_CXX_STANDARD 17)
+
+find_package(SFML 2.5 COMPONENTS graphics window system REQUIRED)
+
+add_executable(JogoDaVelhaSFML
+    main.cpp
+    Game.cpp
+    Board.cpp
+    AIPlayer.cpp
+)
+
+target_link_libraries(JogoDaVelhaSFML sfml-graphics sfml-window sfml-system)
