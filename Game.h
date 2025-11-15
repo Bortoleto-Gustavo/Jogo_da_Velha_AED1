@@ -6,21 +6,12 @@ namespace sf {
     class Font;
     class Text;
     class Event;
+    class RectangleShape;
 }
 
 #include "Board.h"
 #include "AIPlayer.h"
 
-/*
- * @class Game
- * @brief Classe principal que orquestra todo o jogo
- * 
- * Responsável por:
- * - Gerenciar o loop principal do jogo
- * - Processar eventos de entrada
- * - Coordenar entre Board, AIPlayer e interface gráfica
- * - Controlar fluxo do jogo e transições de estado
- */
 class Game {
 public:
     Game();
