@@ -1,4 +1,4 @@
-# Jogo da Velha com IA - SFML & Árvore Binária
+# # Jogo da Velha com IA - SFML & Árvore Binária
 ## Descrição do Projeto
 Este projeto foi feito para a matéria de Estruturas de Dados, buscando aplicar os conceitos de implementação de uma árvore binária.
 
