@@ -1,6 +1,7 @@
 #include "Board.h"
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <vector>
 using namespace std;
 
 Board::Board() : grid(3, vector<Player>(3, Player::NONE)) {}
