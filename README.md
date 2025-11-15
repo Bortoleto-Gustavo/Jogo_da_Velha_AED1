@@ -84,8 +84,8 @@ struct GameState {
 };
 ```
 # 📊 Dificuldades da IA
-| Dificuldade      | Estratégia                     | Chance de Vitória  |
-| ---------------- |--------------------------------|:------------------:|
-| Fácil            | 70% aleatório, 30% estratégico |🟢 Alta|            |
-| Médio            | Regras simples + aleatoriedade |🔴 Média/Baixa      |
-| Difícil          | Minimax completo               |💀 Impossível       |
+| Dificuldade      | Estratégia                     | Chance de Vitória |
+| ---------------- |--------------------------------|:-----------------:|
+| Fácil            | 70% aleatório, 30% estratégico |🟢 Alta|           |
+| Médio            | Regras simples + aleatoriedade |🟡 Médio           |
+| Difícil          | Minimax completo               |🔴 Difícil         |
