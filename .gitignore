@@ -1,0 +1,6 @@
+#bibliotecas SFML
+*.dll
+
+#docs da fase de testes
+*.txt
+*.bat
