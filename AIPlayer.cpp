@@ -126,7 +126,7 @@ pair<int, int> AIPlayer::getHardMove() {
     
     // Avalia cada jogada possível a partir do estado atual
     for (GameState* child : current->children) {
-        int score = minimax(child, 6, false);  // Profundidade reduzida para performance
+        int score = minimax(child, 6, false);
         
         if (score > bestScore) {
             bestScore = score;
@@ -334,3 +334,4 @@ Player AIPlayer::checkWinner(const vector<vector<Player>>& board) {
     
     return Player::NONE;
 }
+
