@@ -3,6 +3,7 @@
 
 #include <vector>
 using namespace std;
+    
 namespace sf {
     class RenderWindow;
 }
