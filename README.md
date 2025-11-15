@@ -1,6 +1,9 @@
 # # Jogo da Velha com IA - SFML & Árvore Binária
 ## Descrição do Projeto
 Este projeto foi feito para a matéria de Estruturas de Dados, buscando aplicar os conceitos de implementação de uma árvore binária.
+## Requisitos Necessários
+* SFML 3.0
+* g++
 
 # 📁 Estrutura do Projeto
 
@@ -72,6 +75,7 @@ g++ -std=c++17 -o jogo_da_velha.exe main.cpp Game.cpp Board.cpp AIPlayer.cpp -ls
 * **Algoritmo Minimax:** IA para jogada perfeita
 
 * **C++17:** Linguagem principal
+  
 # 🌳 Sobre a Implementação da Árvore
 A IA usa uma árvore de estados onde cada nó (GameState) representa um possível estado do tabuleiro. O algoritmo Minimax explora esta árvore recursivamente para encontrar a jogada ótima, alternando entre perspectivas de maximização (IA) e minimização (jogador).
 ##Estrutura da Árvore:
