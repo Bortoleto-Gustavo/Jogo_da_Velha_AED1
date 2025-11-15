@@ -5,15 +5,15 @@ using namespace std;
 
 Game::Game() 
     : window(nullptr)
+    , aiPlayer(nullptr)
     , currentPlayer(Player::X)
     , gameOver(false)
     , font(nullptr)
     , currentDifficulty(Difficulty::MEDIUM) {
     
-    window = new sf::RenderWindow(sf::VideoMode({400, 500}), "Jogo da Velha - SFML");
+    window = new sf::RenderWindow(sf::VideoMode({400, 500}), "Jogo da Velha - SFML (Árvore Persistente)");
     window->setFramerateLimit(60);
     
-    // Inicializar IA com dificuldade média
     aiPlayer = new AIPlayer(Player::O, currentDifficulty);
     
     font = new sf::Font();
@@ -31,7 +31,8 @@ Game::~Game() {
 }
 
 void Game::run() {
-    cout << "Game started! Dificuldade: " << 
+    cout << "=== JOGO DA VELHA ===" << endl;
+    cout << "Dificuldade: " << 
         (currentDifficulty == Difficulty::EASY ? "FACIL" : 
          currentDifficulty == Difficulty::MEDIUM ? "MEDIO" : "DIFICIL") << endl;
     cout << "Controles:" << endl;
@@ -96,12 +97,16 @@ void Game::cycleDifficulty() {
 }
 
 void Game::update() {
-    // AI move
+    // Movimento da IA
     if (currentPlayer == Player::O && !gameOver) {
-        auto move = aiPlayer->getBestMove(board);
+        auto move = aiPlayer->getBestMove();
+        
         if (move.first != -1 && board.isValidMove(move.first, move.second)) {
             cout << "AI plays at: " << move.first << ", " << move.second << endl;
             board.makeMove(move.first, move.second, currentPlayer);
+            
+            // Aualiza a árvore com jogada da IA
+            aiPlayer->updateTree(move);
             
             Player winner = board.checkWinner();
             if (winner != Player::NONE) {
@@ -140,6 +145,9 @@ void Game::handlePlayerClick(float x, float y) {
         if (board.isValidMove(row, col)) {
             cout << "Player X moved to: " << row << ", " << col << endl;
             board.makeMove(row, col, currentPlayer);
+            
+            // Atualiza árvore com jogada do jogador
+            aiPlayer->updateTree({row, col});
             
             Player winner = board.checkWinner();
             if (winner != Player::NONE) {
@@ -189,7 +197,6 @@ void Game::displayGameStatus() {
             statusText.setString("Empate!");
         }
         
-        // Botão de reset
         sf::RectangleShape button({200.f, 40.f});
         button.setFillColor(sf::Color::Green);
         button.setPosition({100.f, 400.f});
@@ -215,7 +222,13 @@ void Game::resetGame() {
     board.reset();
     currentPlayer = Player::X;
     gameOver = false;
-    cout << "Nova partida! Dificuldade: " << 
+    
+    // Reinicia árvore persistente para novo jogo
+    aiPlayer->resetTree();
+    
+    cout << "=== NOVA PARTIDA ===" << endl;
+    cout << "Dificuldade: " << 
         (currentDifficulty == Difficulty::EASY ? "FACIL" : 
          currentDifficulty == Difficulty::MEDIUM ? "MEDIO" : "DIFICIL") << endl;
+    cout << "Árvore reinicializada" << endl;
 }
