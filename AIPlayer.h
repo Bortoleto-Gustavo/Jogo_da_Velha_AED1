@@ -35,21 +35,21 @@ struct GameState {
  */
 class AIPlayer {
 public:
-    AIPlayer(Player aiPlayer, Difficulty difficulty = Difficulty::HARD);
-    ~AIPlayer();
+    AIPlayer(Player aiPlayer, Difficulty difficulty = Difficulty::HARD); // construtor
+    ~AIPlayer(); // destrutor.
     
-    void setDifficulty(Difficulty newDifficulty);
-    pair<int, int> getBestMove();
+    void setDifficulty(Difficulty newDifficulty); // controle de dificuldade.
+    pair<int, int> getBestMove(); // retorna a melhor jogada.
     void updateTree(const pair<int, int>& move);
-    void resetTree();
+    void resetTree(); // reinicia a árvore.
     
 private:
-    Player aiPlayer;
-    Player humanPlayer;
+    Player aiPlayer; // jogador IA.
+    Player humanPlayer; // jogador humano.
     GameState* root;        // Raiz persistente da árvore
     GameState* current;     // Estado atual na árvore
-    Difficulty difficulty;
-    mt19937 rng;
+    Difficulty difficulty; // dificuldade atual.
+    mt19937 rng; // gerador de números.
     
     // Métodos da árvore
     void buildGameTree(GameState* state, int depth);
@@ -57,7 +57,7 @@ private:
     int minimax(GameState* state, int depth, bool isMaximizing);
     vector<pair<int, int>> getAvailableMoves(const vector<vector<Player>>& board);
     Player getOpponent(Player player);
-    bool isGameOver(const vector<vector<Player>>& board);
+    bool isGameOver(const vector<vector<Player>>& board); 
     
     // Estratégias por dificuldade
     pair<int, int> getRandomMove();
@@ -67,7 +67,7 @@ private:
     
     // Métodos auxiliares
     pair<int, int> findMoveDifference(const vector<vector<Player>>& oldBoard, const vector<vector<Player>>& newBoard);
-    Player checkWinner(const vector<vector<Player>>& board);
+    Player checkWinner(const vector<vector<Player>>& board); // prevê vitorias futuras.
 };
 
 #endif
