@@ -3,19 +3,23 @@
 #include <iostream>
 using namespace std;
 
+// Construtor do jogo: inicializa janela, IA, jogador inicial e fonte
 Game::Game() 
     : window(nullptr)
     , aiPlayer(nullptr)
-    , currentPlayer(Player::X)
+    , currentPlayer(Player::X)          // Jogador humano começa
     , gameOver(false)
     , font(nullptr)
-    , currentDifficulty(Difficulty::MEDIUM) {
+    , currentDifficulty(Difficulty::MEDIUM) {  // Dificuldade padrão
     
+    // Cria janela SFML
     window = new sf::RenderWindow(sf::VideoMode({400, 500}), "Jogo da Velha - SFML (Árvore Persistente)");
     window->setFramerateLimit(60);
     
+    // Cria IA controlando o jogador O
     aiPlayer = new AIPlayer(Player::O, currentDifficulty);
     
+    // Carrega fonte
     font = new sf::Font();
     if (!font->openFromFile("arial.ttf")) {
         cout << "Warning: Could not load font." << endl;
@@ -24,12 +28,14 @@ Game::Game()
     }
 }
 
+// Destrutor: libera memória
 Game::~Game() {
     delete window;
     delete aiPlayer;
     if (font) delete font;
 }
 
+// Loop principal do jogo
 void Game::run() {
     cout << "=== JOGO DA VELHA ===" << endl;
     cout << "Dificuldade: " << 
@@ -40,33 +46,37 @@ void Game::run() {
     cout << "- Tecla D: Mudar dificuldade" << endl;
     cout << "- Tecla R: Reiniciar jogo" << endl;
     
+    // Loop enquanto a janela está aberta
     while (window->isOpen()) {
-        processEvents();
-        update();
-        render();
+        processEvents();   // Lida com eventos do teclado e mouse
+        update();          // Atualiza lógica (movimento da IA)
+        render();          // Desenha tudo na tela
     }
 }
 
+// Processa eventos do usuário
 void Game::processEvents() {
     for (auto event = window->pollEvent(); event.has_value(); event = window->pollEvent()) {
         if (event->is<sf::Event::Closed>()) {
-            window->close();
+            window->close();   // Fecha janela
         }
         
+        // Eventos de teclado
         if (auto* keyEvent = event->getIf<sf::Event::KeyPressed>()) {
             if (keyEvent->scancode == sf::Keyboard::Scan::R) {
-                resetGame();
+                resetGame();   // Reinicia partida
             }
             if (keyEvent->scancode == sf::Keyboard::Scan::D) {
-                cycleDifficulty();
+                cycleDifficulty();  // Alterna dificuldade
             }
         }
         
+        // Clique do mouse
         if (auto* mouseEvent = event->getIf<sf::Event::MouseButtonPressed>()) {
             if (mouseEvent->button == sf::Mouse::Button::Left) {
                 sf::Vector2i mousePos = mouseEvent->position;
                 
-                if (gameOver) {
+                if (gameOver) {    // Se já acabou, clique inicia novo jogo
                     resetGame();
                 } else {
                     handlePlayerClick(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
@@ -76,6 +86,7 @@ void Game::processEvents() {
     }
 }
 
+// Alterna entre fácil → médio → difícil → fácil
 void Game::cycleDifficulty() {
     switch(currentDifficulty) {
         case Difficulty::EASY:
@@ -89,25 +100,26 @@ void Game::cycleDifficulty() {
             break;
     }
     
-    aiPlayer->setDifficulty(currentDifficulty);
+    aiPlayer->setDifficulty(currentDifficulty);  // Atualiza IA
     
     cout << "Dificuldade alterada para: " << 
         (currentDifficulty == Difficulty::EASY ? "FACIL" : 
          currentDifficulty == Difficulty::MEDIUM ? "MEDIO" : "DIFICIL") << endl;
 }
 
+// Atualiza lógica do jogo: turno da IA
 void Game::update() {
-    // Movimento da IA
     if (currentPlayer == Player::O && !gameOver) {
-        auto move = aiPlayer->getBestMove();
+        auto move = aiPlayer->getBestMove();  // IA escolhe movimento
         
         if (move.first != -1 && board.isValidMove(move.first, move.second)) {
             cout << "AI plays at: " << move.first << ", " << move.second << endl;
             board.makeMove(move.first, move.second, currentPlayer);
             
-            // Aualiza a árvore com jogada da IA
+            // IA atualiza árvore persistente
             aiPlayer->updateTree(move);
             
+            // Verifica ganhador ou empate
             Player winner = board.checkWinner();
             if (winner != Player::NONE) {
                 gameOver = true;
@@ -116,28 +128,32 @@ void Game::update() {
                 gameOver = true;
                 cout << "Game Over! It's a draw!" << endl;
             } else {
-                switchPlayer();
+                switchPlayer();  // Volta para o jogador humano
             }
         }
     }
 }
 
+// Desenha tela completa
 void Game::render() {
     window->clear(sf::Color::Black);
-    board.draw(*window);
-    displayGameStatus();
-    displayDifficulty();
+    board.draw(*window);       // Desenha tabuleiro
+    displayGameStatus();       // Texto de status
+    displayDifficulty();       // Texto da dificuldade
     window->display();
 }
 
+// Trata clique do jogador humano
 void Game::handlePlayerClick(float x, float y) {
     if (currentPlayer != Player::X || gameOver) return;
     
+    // Dimensões do tabuleiro
     const float boardSize = 300.f;
     const float cellSize = boardSize / 3.f;
     const float startX = (400.f - boardSize) / 2.f;
     const float startY = 50.f;
     
+    // Verifica se clique ocorreu dentro do tabuleiro
     if (x >= startX && x < startX + boardSize && y >= startY && y < startY + boardSize) {
         int col = static_cast<int>((x - startX) / cellSize);
         int row = static_cast<int>((y - startY) / cellSize);
@@ -146,24 +162,24 @@ void Game::handlePlayerClick(float x, float y) {
             cout << "Player X moved to: " << row << ", " << col << endl;
             board.makeMove(row, col, currentPlayer);
             
-            // Atualiza árvore com jogada do jogador
+            // Atualiza árvore persistente
             aiPlayer->updateTree({row, col});
             
+            // Checa fim de jogo
             Player winner = board.checkWinner();
             if (winner != Player::NONE) {
                 gameOver = true;
-                cout << "Game Over! " << (winner == Player::X ? "X" : "O") << " wins!" << endl;
             } else if (board.isBoardFull()) {
                 gameOver = true;
-                cout << "Game Over! It's a draw!" << endl;
             } else {
-                switchPlayer();
+                switchPlayer();  // Passa turno para IA
                 cout << "AI's turn..." << endl;
             }
         }
     }
 }
 
+// Mostra dificuldade atual
 void Game::displayDifficulty() {
     if (!font) return;
     
@@ -182,6 +198,7 @@ void Game::displayDifficulty() {
     window->draw(diffText);
 }
 
+// Mostra status: vez do jogador, vitória, empate, etc
 void Game::displayGameStatus() {
     if (!font) return;
     
@@ -191,12 +208,15 @@ void Game::displayGameStatus() {
     
     if (gameOver) {
         Player winner = board.checkWinner();
+        
+        // Define texto principal
         if (winner != Player::NONE) {
             statusText.setString((winner == Player::X) ? "X Venceu!" : "IA Venceu!");
         } else {
             statusText.setString("Empate!");
         }
         
+        // Desenha botão de nova partida
         sf::RectangleShape button({200.f, 40.f});
         button.setFillColor(sf::Color::Green);
         button.setPosition({100.f, 400.f});
@@ -214,21 +234,22 @@ void Game::displayGameStatus() {
     window->draw(statusText);
 }
 
+// Alterna jogador X <-> O
 void Game::switchPlayer() {
     currentPlayer = (currentPlayer == Player::X) ? Player::O : Player::X;
 }
 
+// Reinicia toalmente o jogo
 void Game::resetGame() {
     board.reset();
     currentPlayer = Player::X;
     gameOver = false;
     
-    // Reinicia árvore persistente para novo jogo
+    // Reset da árvore persistente
     aiPlayer->resetTree();
     
     cout << "=== NOVA PARTIDA ===" << endl;
     cout << "Dificuldade: " << 
-        (currentDifficulty == Difficulty::EASY ? "FACIL" : 
-         currentDifficulty == Difficulty::MEDIUM ? "MEDIO" : "DIFICIL") << endl;
-    cout << "Árvore reinicializada" << endl;
-}
+        (currentDifficulty == Difficulty::
+
+
