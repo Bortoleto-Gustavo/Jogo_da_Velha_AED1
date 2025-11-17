@@ -60,10 +60,10 @@ private:
     bool isGameOver(const vector<vector<Player>>& board); 
     
     // Estratégias por dificuldade
-    pair<int, int> getRandomMove();
-    pair<int, int> getEasyMove();
-    pair<int, int> getMediumMove();
-    pair<int, int> getHardMove();
+    pair<int, int> getRandomMove(); //Escolhe uma jogada 100% aleatória
+    pair<int, int> getEasyMove();// Lógica da IA Fácil 
+    pair<int, int> getMediumMove();//Lógica da IA Média 
+    pair<int, int> getHardMove();// (Privado) Lógica da IA Difícil 
     
     // Métodos auxiliares
     pair<int, int> findMoveDifference(const vector<vector<Player>>& oldBoard, const vector<vector<Player>>& newBoard);
